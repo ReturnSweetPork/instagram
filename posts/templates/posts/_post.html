@@ -1,4 +1,7 @@
-<div class="card">
+<div class="card my-5">
+  <div class="card-header">
+    <h5 class="card-text">{{post.user}}</h5>
+  </div>
   {% if post.image_set %}
     <div id="post{{post.id}}" class="carousel slide" data-ride="carousel">
       <div class="carousel-inner">
@@ -17,14 +20,28 @@
         <span class="sr-only">Next</span>
       </a>
     </div>
-    
+    <img src="{{post.image.url}}" class="card-img-top" alt="...">
   {% else %}
     <img src="..." class="card-img-top" alt="...">
   {% endif %}
   
   <div class="card-body">
     <p class="card-text">{{post.content}}</p>
+    {% if post.user == user %}
     <a href="{% url 'posts:update' post.id %}" class="btn btn-warning">수정</a>
     <a href="{% url 'posts:delete' post.id %}" class="btn btn-danger">삭제</a>
+    {% endif %}
+  </div>
+  <div class='card-body'>
+    <form action = '{% url 'posts:comment_create' post.id %}' method = 'post'> 
+        {% csrf_token %}
+        {{comment_form}}
+        <input type="submit" name=""/>
+    </form>  
   </div>
 </div>
+
+
+
+
+    
