@@ -10,7 +10,6 @@ def list(request):
     comment_form = CommentForm()
     return render(request,'posts/list.html',{'posts':posts, 'comment_form':comment_form})
     
-@login_required
 def create(request):
     # 1. get 방식으로 데이터를 입력할 form을 요청한다.
     # 4. 사용자가 데이터를 입력해서 post방식으로 요청한다.
