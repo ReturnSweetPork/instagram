@@ -1,6 +1,6 @@
 <div class="card my-5">
   <div class="card-header">
-    <h5 class="card-text">{{post.user}}</h5>
+    <a href="{% url 'accounts:user_page' post.user.id %}" style="color:black"><h5 class="card-text">{{post.user}}</h5></a>
   </div>
   {% if post.image_set %}
     <div id="post{{post.id}}" class="carousel slide" data-ride="carousel">
@@ -20,28 +20,43 @@
         <span class="sr-only">Next</span>
       </a>
     </div>
-    <img src="{{post.image.url}}" class="card-img-top" alt="...">
   {% else %}
     <img src="..." class="card-img-top" alt="...">
   {% endif %}
   
   <div class="card-body">
-    <p class="card-text">{{post.content}}</p>
+    <!-- 좋아요 버튼 시작 -->
+    {% if user in post.likes.all %}
+      <a href="{% url 'posts:like' post.id %}"><i class="fas fa-heart" style="color:#ed4956"></i></a>
+    {% else %}
+      <a href="{% url 'posts:like' post.id %}"><i class="far fa-heart" style="color:black"></i></a>
+    {% endif %}
+    <!-- 좋아요 버튼 끝-->
+    <p class="card-text"><strong>{{post.user}}</strong> {{post.content}}</p>
+    <p class="card-text">좋아요 {{post.likes.count}}개</p>
     {% if post.user == user %}
-    <a href="{% url 'posts:update' post.id %}" class="btn btn-warning">수정</a>
-    <a href="{% url 'posts:delete' post.id %}" class="btn btn-danger">삭제</a>
+      <a href="{% url 'posts:update' post.id %}" class="btn btn-warning">수정</a>
+      <a href="{% url 'posts:delete' post.id %}" class="btn btn-danger">삭제</a>
     {% endif %}
   </div>
-  <div class='card-body'>
-    <form action = '{% url 'posts:comment_create' post.id %}' method = 'post'> 
-        {% csrf_token %}
-        {{comment_form}}
-        <input type="submit" name=""/>
-    </form>  
+  
+  <!--댓글을 보여주는 부분-->
+  <div class="card-body">
+    {% for comment in post.comment_set.all %}
+      <p class="card-text"><strong>{{comment.user}}</strong> {{comment.content}}</p>
+      {% if comment.user == user %}
+        <a href="{% url 'posts:comment_delete' post.id comment.id %}" class="btn btn-danger">삭제</a>
+      {% endif %}
+    {% empty%}
+      <p class="card-text">댓글이 없어요 ㅠㅠㅠ</p>
+    {% endfor %}
+  </div>
+  
+  <div class="card-body">
+    <form action="{% url 'posts:comment_create' post.id %}" method='post'>
+      {% csrf_token %}
+      {{comment_form.content}}
+      <input type="submit"/>
+    </form>
   </div>
 </div>
-
-
-
-
-    

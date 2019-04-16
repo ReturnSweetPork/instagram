@@ -1,7 +1,8 @@
 from django.shortcuts import render,redirect
 from .forms import PostForm, ImageForm, CommentForm
-from .models import Post
+from .models import Post, Comment
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_POST
 # Create your views here.
 
 def list(request):
@@ -67,6 +68,7 @@ def delete(request,id):
     
     
 @login_required 
+@require_POST
 def comment_create(request, post_id):
     if request.method == 'POST':
         comment_form = CommentForm(request.POST)
@@ -76,4 +78,52 @@ def comment_create(request, post_id):
             comment.post = Post.objects.get(id=post_id)
             comment.save()
             return redirect('posts:list')
+            
+@login_required
+def comment_delete(request, post_id, comment_id):
+    comment = Comment.objects.get(id=comment_id)
+    if comment.user == request.user:
+        comment.delete()
+    return redirect('posts:list')
+            
+@login_required
+def like(require, post_id):
+    user = require.user
+    post = Post.objects.get(id=post_id)
+    #사용자가 좋아요를 눌렀다면
+    if user in post.likes.all():
+        post.likes.remove(user)
+    #사용자가 좋아요를 누르지 않았다면
+    else:
+        post.likes.add(user)
+
+    return redirect('posts:list')
+    
+
+
+#과거의 코드입니다.
+    # user = require.user
+    # post = Post.objects.get(id=id)
+    # likes = post.like_set.all
+    # check = 0
+    # for like in likes:
+    #     if user == like.user:
+    #     #사용자가 좋아요를 이미 눌렀다면
+    #         like.delete()
+    #         check = 1
+    #         like_post = like
+            
+            
+    # if check == 1:
+    #     like_post.delete()
+    # else:
+    #     like = Like(user=user,post=post)
+    #     #좋아요 추가
+    #     like.save()
+    # return redirect('posts:like')
+    #     #if 사용자가 좋아요를 안눌렀다면
+        
+        
+    #     #좋아요 취소
+        
   
