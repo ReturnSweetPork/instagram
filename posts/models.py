@@ -3,11 +3,27 @@ from imagekit.models import ProcessedImageField
 from imagekit.processors import ResizeToFill
 from django.conf import settings
 # Create your models here.
+
+
+
+class Hashtag(models.Model):
+    content = models.CharField(max_length=100)
+    def  __str__(self):
+        return self.content
+
+
+
+
+
+
+
+
 class Post(models.Model):
     content = models.CharField(max_length=100)
     # image = models.ImageField(blank=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     likes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="like_post_set",blank=True)
+    hashtag = models.ManyToManyField(Hashtag, blank = True)
     
     
     

@@ -1,6 +1,6 @@
 from django.shortcuts import render,redirect
 from .forms import PostForm, ImageForm, CommentForm
-from .models import Post, Comment
+from .models import Post, Comment, Hashtag
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
 # Create your views here.
@@ -26,6 +26,18 @@ def create(request):
             post = post_form.save(commit=False)
             post.user = request.user
             post.save()
+            
+            #해쉬태그 기능 추가
+            content = post_form.cleaned_data.get('content')
+            content_words = content.split()
+            for word in content_words:
+                if word[0] == "#":
+                    tag = Hashtag.objects.get_or_create(content=word)
+                    post.hashtag.add(tag[0])
+                    
+                    
+                    
+            #해쉬태그 끝
             for image in request.FILES.getlist('file') :
                 request.FILES['file'] = image
                 image_form = ImageForm(request.POST,request.FILES)
@@ -45,6 +57,11 @@ def create(request):
     # 8. 사용자가 입력한 데이터는 form에 담아진 상태로 다시 form을 담아서 create.html을 보내준다.
     return render(request,'posts/form.html',{'post_form':post_form,'image_form':image_form})
     
+    
+    
+    
+
+
 @login_required 
 def update(request,id):
     post = Post.objects.get(id=id)
@@ -53,6 +70,17 @@ def update(request,id):
             post_form = PostForm(request.POST, instance=post)
             if post_form.is_valid():
                 post_form.save()
+                
+                #해쉬태그 기능 추가
+                post.hashtag.clear()
+                content = post_form.cleaned_data.get('content')
+                content_words = content.split()
+                for word in content_words:
+                    if word[0] == "#":
+                        tag = Hashtag.objects.get_or_create(content=word)
+                        post.hashtag.add(tag[0])
+                #해쉬태그 끝
+                
                 return redirect("posts:list")
         else:
             post_form = PostForm(instance=post)

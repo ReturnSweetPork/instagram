@@ -8,7 +8,7 @@
             {% if user_info.profile_image %}
             <img src="{{user_info.profile_image.url}}" alt='' class='rounded-circle'></img>
             {% else %}
-            <img src="media/accounts/images/defalut.JPG" alt='' class='rounded-circle'></img>
+            <img src="/media/accounts/images/defalut.jpg" alt='' class='rounded-circle'></img>
             {% endif %}
         </div>
         <div class="col-6">
@@ -32,7 +32,9 @@
                 <h5 class="mx-3">팔로워 : {{user_info.followers.count}}</h5>
             </div>
             <div class="row">
-                <p>자기소개 문장</p>
+                <div class="col-6 offset-4">
+                    <p>{{user_info.introduce}}</p>
+                </div>
             </div>
         </div>
     </div>
