@@ -35,8 +35,6 @@ def create(request):
                     tag = Hashtag.objects.get_or_create(content=word)
                     post.hashtag.add(tag[0])
                     
-                    
-                    
             #해쉬태그 끝
             for image in request.FILES.getlist('file') :
                 request.FILES['file'] = image
@@ -126,31 +124,10 @@ def like(require, post_id):
 
     return redirect('posts:list')
     
-
-
-#과거의 코드입니다.
-    # user = require.user
-    # post = Post.objects.get(id=id)
-    # likes = post.like_set.all
-    # check = 0
-    # for like in likes:
-    #     if user == like.user:
-    #     #사용자가 좋아요를 이미 눌렀다면
-    #         like.delete()
-    #         check = 1
-    #         like_post = like
-            
-            
-    # if check == 1:
-    #     like_post.delete()
-    # else:
-    #     like = Like(user=user,post=post)
-    #     #좋아요 추가
-    #     like.save()
-    # return redirect('posts:like')
-    #     #if 사용자가 좋아요를 안눌렀다면
-        
-        
-    #     #좋아요 취소
-        
-  
+def hashtag(request, id):
+    hashtag = Hashtag.objects.get(id = id)
+    posts = hashtag.post_set.all()
+    comment_form = CommentForm
+    
+    
+    return render(request, 'posts/list.html', {'posts':posts, 'comment_form':comment_form, 'hashtag':hashtag})

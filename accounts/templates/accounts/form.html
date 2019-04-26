@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load bootstrap4 %}
+{% load socialaccount %}
 {% block body %}
     {% if request.resolver_match.url_name == "signup" %}
         <h1>회원가입</h1>
@@ -8,9 +9,12 @@
     {% else %}
         <h2>프로필수정</h2>
     {% endif %}
-<form action = "" method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {% bootstrap_form form %}
-    <input type="submit" name=""/>
-</form>
+    <form action = "" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {% bootstrap_form form %}
+        <input type="submit" name=""/>
+    </form>
+    {% if request.resolver_match.url_name == "login" %}
+        <a href="{% provider_login_url 'kakao' method = 'auth2' %}">카카오로그인</a>
+    {% endif %}    
 {% endblock %}
